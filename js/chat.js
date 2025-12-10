@@ -5,7 +5,6 @@ import { ref, onValue, push, get, query, orderByChild, limitToLast } from "https
 let loggedInUser = null;
 let loggedInUserData = null;
 let activeChat = { id: null, type: null, name: null };
-let usersData = {};
 let chatUnsubscribe = null;
 const ADMIN_ROOT_UID_KEY = 'Ogy9lUbGHbSu8wYIYx2gQsTtFDF2';
 
@@ -14,15 +13,28 @@ const welcomeScreen = document.getElementById('welcome-screen');
 const chatContent = document.getElementById('chat-content');
 const messageInput = document.getElementById('message-input');
 const chatMessagesEl = document.getElementById('chat-messages');
+const activeChatNameEl = document.getElementById('active-chat-name');
+const activeChatAvatarEl = document.getElementById('active-chat-avatar');
+const sendButton = document.getElementById('send-button');
 
-document.getElementById('logout-btn').addEventListener('click', () => signOut(auth).then(() => window.location.href = 'login.html'));
-document.getElementById('mobile-dashboard-btn').addEventListener('click', () => window.location.href = 'dashboard.html');
-document.getElementById('sidebar-toggle-btn').addEventListener('click', () => chatSidebar.classList.toggle('open'));
+document.getElementById('logout-btn').addEventListener('click', () => {
+    signOut(auth).then(() => window.location.href = 'login.html');
+});
+
+document.getElementById('sidebar-toggle-btn').addEventListener('click', () => {
+    chatSidebar.classList.add('open');
+});
 
 function escapeHTML(str) {
     if (!str) return '';
     return str.replace(/[&<>"']/g, (match) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[match]));
 }
+
+messageInput.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight) + 'px';
+    if(this.value === '') this.style.height = 'auto';
+});
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -37,7 +49,8 @@ onAuthStateChanged(auth, (user) => {
                 window.location.href = 'login.html';
                 return;
             }
-            document.getElementById('user-greeting').innerHTML = `Halo, <span>${loggedInUserData.nama || 'User'}</span>`;
+            const firstName = (loggedInUserData.nama || 'User').split(' ')[0];
+            document.getElementById('user-greeting').innerHTML = `Halo, <span>${firstName}</span>`;
             fetchUsersAndSetupLists();
         });
     } else {
@@ -47,13 +60,11 @@ onAuthStateChanged(auth, (user) => {
 
 function fetchUsersAndSetupLists() {
     onValue(ref(db, 'users'), (snapshot) => {
-        usersData = {};
         const usersArray = [];
         snapshot.forEach((child) => {
             const u = child.val();
             u.uid = child.key;
             if (u.status === 'approved' && u.uid !== loggedInUser.uid) {
-                usersData[u.uid] = u;
                 usersArray.push(u);
             }
         });
@@ -67,15 +78,15 @@ function renderGroupList() {
     const list = document.getElementById('group-chat-list');
     list.innerHTML = '';
     if (loggedInUserData.departemen) {
-        const id = loggedInUserData.departemen.toLowerCase().replace(/[^a-z0-9]/g, '');
-        list.innerHTML += createChatHTML('group', id, `Divisi ${loggedInUserData.departemen}`, 'fa-users');
+        const deptId = loggedInUserData.departemen.toLowerCase().replace(/[^a-z0-9]/g, '');
+        list.innerHTML += createChatHTML('group', deptId, `Divisi ${loggedInUserData.departemen}`, 'fa-users');
     }
-    list.innerHTML += createChatHTML('group', 'all_employees', 'Semua Karyawan', 'fa-globe');
+    list.innerHTML += createChatHTML('group', 'all_employees', 'Semua Karyawan', 'fa-earth-asia');
 }
 
 function renderAdminList() {
     if (loggedInUser.uid !== ADMIN_ROOT_UID_KEY) {
-        document.getElementById('admin-chat-list').innerHTML = createChatHTML('admin', ADMIN_ROOT_UID_KEY, 'Admin IT', 'fa-user-secret');
+        document.getElementById('admin-chat-list').innerHTML = createChatHTML('admin', ADMIN_ROOT_UID_KEY, 'Admin IT Support', 'fa-headset');
     } else {
         document.getElementById('admin-chat-section').style.display = 'none';
     }
@@ -84,11 +95,21 @@ function renderAdminList() {
 function renderPrivateList(users) {
     const list = document.getElementById('private-chat-list');
     list.innerHTML = '';
-    users.forEach(u => list.innerHTML += createChatHTML('private', u.uid, u.nama || u.email, 'fa-user'));
-    
+    if (users.length === 0) {
+        list.innerHTML = `<div class="chat-item" style="cursor:default; color:#999; font-size:0.9rem; padding:15px;">Belum ada user lain.</div>`;
+        return;
+    }
+    users.sort((a, b) => (a.nama || '').localeCompare(b.nama || ''));
+    users.forEach(u => {
+        list.innerHTML += createChatHTML('private', u.uid, u.nama || u.email, 'fa-user');
+    });
     document.querySelectorAll('.chat-item').forEach(item => {
         item.addEventListener('click', () => {
-            switchChat(item.dataset.id, item.dataset.type, item.querySelector('h4').textContent);
+            const id = item.dataset.id;
+            const type = item.dataset.type;
+            const name = item.querySelector('h4').textContent;
+            const iconClass = item.querySelector('.chat-avatar i').className;
+            switchChat(id, type, name, iconClass);
         });
     });
 }
@@ -97,58 +118,88 @@ function createChatHTML(type, id, name, icon) {
     let dataId = id;
     if (type === 'admin') dataId = `admin_${id}`;
     if (type === 'group') dataId = `group_${id}`;
-    return `<div class="chat-item" data-id="${dataId}" data-type="${type}"><div class="chat-avatar"><i class="fa-solid ${icon}"></i></div><div class="chat-info"><h4>${escapeHTML(name)}</h4><p>Klik untuk chat</p></div></div>`;
+    return `
+        <div class="chat-item" data-id="${dataId}" data-type="${type}">
+            <div class="chat-avatar"><i class="${icon}"></i></div>
+            <div class="chat-info"><h4>${escapeHTML(name)}</h4><p>Klik untuk mulai chat</p></div>
+        </div>
+    `;
 }
 
-function switchChat(id, type, name) {
+function switchChat(id, type, name, iconClass) {
     if (activeChat.id === id) return;
     if (chatUnsubscribe) chatUnsubscribe();
     activeChat = { id, type, name };
     
     document.querySelectorAll('.chat-item').forEach(i => i.classList.remove('active'));
-    document.querySelector(`.chat-item[data-id="${CSS.escape(id)}"]`)?.classList.add('active');
+    const activeItem = document.querySelector(`.chat-item[data-id="${CSS.escape(id)}"]`);
+    if(activeItem) activeItem.classList.add('active');
     
     welcomeScreen.style.display = 'none';
     chatContent.style.display = 'flex';
-    document.getElementById('active-chat-name').textContent = name;
+    activeChatNameEl.textContent = name;
+    activeChatAvatarEl.innerHTML = `<i class="${iconClass}"></i>`;
     
     let path;
-    if (type === 'group') path = `chats/group_chats/${id.replace('group_', '')}`;
-    else {
-        const target = id.replace('admin_', '');
-        path = `chats/private_chats/${[loggedInUser.uid, target].sort().join('_')}`;
+    if (type === 'group') {
+        const realId = id.replace('group_', '');
+        path = `chats/group_chats/${realId}`;
+    } else {
+        const targetId = id.replace('admin_', '');
+        const combinedId = [loggedInUser.uid, targetId].sort().join('_');
+        path = `chats/private_chats/${combinedId}`;
     }
 
-    const q = query(ref(db, path), orderByChild('timestamp'), limitToLast(50));
-    chatMessagesEl.innerHTML = '';
-    chatUnsubscribe = onValue(q, (snap) => {
+    const q = query(ref(db, path), orderByChild('timestamp'), limitToLast(100));
+    chatMessagesEl.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">Memuat pesan...</div>';
+    
+    chatUnsubscribe = onValue(q, (snapshot) => {
         chatMessagesEl.innerHTML = '';
-        snap.forEach(c => renderMessage(c.val(), type));
+        const messages = [];
+        snapshot.forEach(c => messages.push(c.val()));
+        if (messages.length === 0) {
+            chatMessagesEl.innerHTML = '<div style="text-align:center; padding:40px; color:#9ca3af; font-size:0.9rem;">Belum ada pesan. Sapa sekarang! 👋</div>';
+        } else {
+            messages.forEach(msg => renderMessage(msg, type));
+        }
         chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
     });
     
     if (window.innerWidth <= 900) chatSidebar.classList.remove('open');
+    messageInput.focus();
 }
 
 function renderMessage(msg, type) {
     const isSent = msg.senderId === loggedInUser.uid;
     const div = document.createElement('div');
     div.className = `message-item ${isSent ? 'sent' : 'received'}`;
-    const sender = !isSent && type === 'group' ? `<span class="message-sender">${escapeHTML(msg.senderName)}</span>` : '';
-    div.innerHTML = `<div class="message-content">${sender}${escapeHTML(msg.text)}<span class="message-time">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div>`;
+    let senderHtml = '';
+    if (!isSent && type === 'group') {
+        const senderName = escapeHTML(msg.senderName).split(' ')[0];
+        senderHtml = `<span class="message-sender">${senderName}</span>`;
+    }
+    const time = new Date(msg.timestamp).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+    div.innerHTML = `<div class="message-content">${senderHtml}${escapeHTML(msg.text).replace(/\n/g, '<br>')}<span class="message-time">${time}</span></div>`;
     chatMessagesEl.appendChild(div);
 }
-
-document.getElementById('send-button').addEventListener('click', sendMessage);
-messageInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
 
 function sendMessage() {
     const text = messageInput.value.trim();
     if (!text || !activeChat.id) return;
     
+    messageInput.value = '';
+    messageInput.style.height = 'auto';
+    messageInput.focus();
+
     let path;
-    if (activeChat.type === 'group') path = `chats/group_chats/${activeChat.id.replace('group_', '')}`;
-    else path = `chats/private_chats/${[loggedInUser.uid, activeChat.id.replace('admin_', '')].sort().join('_')}`;
+    if (activeChat.type === 'group') {
+        const realId = activeChat.id.replace('group_', '');
+        path = `chats/group_chats/${realId}`;
+    } else {
+        const targetId = activeChat.id.replace('admin_', '');
+        const combinedId = [loggedInUser.uid, targetId].sort().join('_');
+        path = `chats/private_chats/${combinedId}`;
+    }
     
     push(ref(db, path), {
         senderId: loggedInUser.uid,
@@ -156,5 +207,12 @@ function sendMessage() {
         text: text,
         timestamp: Date.now()
     });
-    messageInput.value = '';
 }
+
+sendButton.addEventListener('click', sendMessage);
+messageInput.addEventListener('keypress', (e) => {
+    if(e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
