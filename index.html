@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Registrasi - Zeppelin Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            height: 100vh;
+            background: linear-gradient(135deg, #D9232D 0%, #F37321 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            padding: 16px; /* (BARU) Padding untuk mobile */
+        }
+        .container-wrapper {
+            width: 100%;
+            max-width: 400px;
+        }
+        .form-container {
+            background-color: #ffffff;
+            padding: 30px 40px; /* (DIUBAH) Dikecilkan sedikit */
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease-out forwards;
+            position: relative; /* (BARU) Untuk message box */
+        }
+        /* Sembunyikan form registrasi by default */
+        #register-container {
+            display: none;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .form-logo {
+            font-size: 2.2rem; /* (DIUBAH) Dikecilkan sedikit */
+            font-weight: 700;
+            color: #D9232D;
+            margin-bottom: 8px;
+        }
+        .form-logo i { color: #F37321; }
+        .form-title {
+            font-size: 1.1rem; /* (DIUBAH) Dikecilkan sedikit */
+            font-weight: 300;
+            margin-bottom: 25px;
+            color: #555;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 20px; /* (DIUBAH) Jarak antar input */
+        }
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+        .input-field {
+            width: 100%;
+            padding: 14px 15px 14px 45px; /* (DIUBAH) Dikecilkan sedikit */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #D9232D;
+            box-shadow: 0 0 0 3px rgba(217, 35, 45, 0.1);
+        }
+        .form-button {
+            width: 100%;
+            padding: 14px; /* (DIUBAH) Dikecilkan sedikit */
+            border: none;
+            border-radius: 8px;
+            background-color: #D9232D;
+            color: white;
+            font-size: 1rem; /* (DIUBAH) Dikecilkan sedikit */
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .form-button:hover {
+            background-color: #B01B22;
+            transform: translateY(-2px);
+        }
+        .form-button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* (BARU) Link untuk ganti form */
+        .form-switch {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .form-switch a {
+            color: #D9232D;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .form-switch a:hover {
+            text-decoration: underline;
+        }
+
+        /* (BARU) Kotak pesan error/sukses */
+        .message-box {
+            font-size: 0.9rem;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none; /* Sembunyi by default */
+        }
+        .error {
+            background-color: #fee2e2;
+            color: #D93025;
+            border: 1px solid #D93025;
+        }
+        .success {
+            background-color: #dcfce7;
+            color: #16a34a;
+            border: 1px solid #16a34a;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-wrapper">
+        <div class="form-container" id="login-container">
+            <div class="form-logo">
+                <i class="fa-solid fa-gear"></i> ZEPPELIN
+            </div>
+            <p class="form-title">Portal Operasional Internal</p>
+            
+            <form id="login-form">
+                <div class="input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="login-email" class="input-field" placeholder="Email" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="login-password" class="input-field" placeholder="Kata Sandi" required>
+                </div>
+                
+                <button type="submit" class="form-button" id="login-button">Masuk</button>
+                
+                <div id="login-msg" class="message-box"></div>
+            </form>
+            <div class="form-switch">
+                Belum punya akun? <a id="show-register">Daftar di sini</a>
+            </div>
+        </div>
+
+        <div class="form-container" id="register-container">
+            <div class="form-logo">
+                <i class="fa-solid fa-user-plus"></i> ZEPPELIN
+            </div>
+            <p class="form-title">Registrasi Akun Baru</p>
+            
+            <form id="register-form">
+                <div class="input-group">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="reg-name" class="input-field" placeholder="Nama Lengkap" required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-briefcase"></i>
+                    <input type="text" id="reg-dept" class="input-field" placeholder="Departemen / Team" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="reg-email" class="input-field" placeholder="Email (example@zeppelin.center)" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="reg-password" class="input-field" placeholder="Kata Sandi (Min. 6 karakter)" required>
+                </div>
+                
+                <button type="submit" class="form-button" id="register-button">Daftar</button>
+                
+                <div id="register-msg" class="message-box"></div>
+            </form>
+            <div class="form-switch">
+                Sudah punya akun? <a id="show-login">Login di sini</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        // [PERUBAHAN] Impor signOut
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        // [PERUBAHAN] Impor get dan child
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9wgSalrlTcveIZi2i-WND86z1i9JYHKw",
+            authDomain: "it-support-53eeb.firebaseapp.com",
+            databaseURL: "https://it-support-53eeb-default-rtdb.firebaseio.com",
+            projectId: "it-support-53eeb",
+            storageBucket: "it-support-53eeb.firebasestorage.app",
+            messagingSenderId: "573924501146",
+            appId: "1:573924501146:web:12f34306ed675472322123",
+            measurementId: "G-33K6DDE1VR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app); 
+
+        // --- (BARU) Fungsi Tampilkan Pesan ---
+        function showMessage(elementId, message, isError = true) {
+            const msgBox = document.getElementById(elementId);
+            msgBox.textContent = message;
+            msgBox.className = isError ? 'message-box error' : 'message-box success';
+            msgBox.style.display = 'block';
+        }
+        function hideMessage(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+
+        // --- (BARU) Cek Alasan Redirect dari URL ---
+        // Ini akan menangkap jika user ditendang dari dashboard
+        const urlParams = new URLSearchParams(window.location.search);
+        const reason = urlParams.get('reason');
+        if (reason) {
+            let msg = "Silakan login kembali.";
+            if (reason === 'pending') {
+                msg = "Akun Anda masih menunggu persetujuan Admin.";
+            } else if (reason === 'rejected') {
+                msg = "Akun Anda ditolak. Silakan hubungi Admin.";
+            } else if (reason === 'no_data' || reason === 'invalid') {
+                msg = "Terjadi masalah saat memvalidasi akun Anda. Hubungi Admin.";
+            } else if (reason === 'db_error') {
+                msg = "Gagal terhubung ke database. Coba lagi.";
+            }
+            showMessage('login-msg', msg);
+        }
+
+        // --- (BARU) Elemen Tampilan ---
+        const loginContainer = document.getElementById('login-container');
+        const registerContainer = document.getElementById('register-container');
+        const showLoginBtn = document.getElementById('show-login');
+        const showRegisterBtn = document.getElementById('show-register');
+
+        showLoginBtn.addEventListener('click', () => {
+            registerContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+            hideMessage('login-msg');
+        });
+        showRegisterBtn.addEventListener('click', () => {
+            loginContainer.style.display = 'none';
+            registerContainer.style.display = 'block';
+            hideMessage('register-msg');
+        });
+
+
+        // --- Logika LOGIN (TELAH DIPERBARUI) ---
+        const loginForm = document.getElementById('login-form');
+        const loginEmailInput = document.getElementById('login-email');
+        const loginPasswordInput = document.getElementById('login-password');
+        const loginButton = document.getElementById('login-button');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = loginEmailInput.value;
+            const password = loginPasswordInput.value;
+            
+            loginButton.disabled = true;
+            loginButton.innerText = "Memproses...";
+            hideMessage('login-msg');
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // [PERUBAHAN] Berhasil Auth, sekarang cek status di Database
+                    const user = userCredential.user;
+                    const userRef = ref(db, 'users/' + user.uid);
+                    
+                    get(userRef).then((snapshot) => {
+                        if (snapshot.exists()) {
+                            const userData = snapshot.val();
+                            
+                            if (userData.status === 'approved') {
+                                // --- DISETUJUI ---
+                                // Berhasil login, arahkan ke dashboard utama
+                                window.location.href = 'dashboard.html';
+                            
+                            } else if (userData.status === 'pending') {
+                                // --- PENDING ---
+                                showMessage('login-msg', "Akun Anda masih menunggu persetujuan Admin.");
+                                signOut(auth); // (PENTING) Logout kembali
+                                loginButton.disabled = false;
+                                loginButton.innerText = "Masuk";
+                            
+                            } else if (userData.status === 'rejected') {
+                                // --- DITOLAK ---
+                                showMessage('login-msg', "Akun Anda ditolak. Silakan hubungi Admin.");
+                                signOut(auth); // (PENTING) Logout kembali
+                                loginButton.disabled = false;
+                                loginButton.innerText = "Masuk";
+                            
+                            } else {
+                                // --- STATUS LAIN ---
+                                showMessage('login-msg', "Status akun tidak valid. Hubungi Admin.");
+                                signOut(auth); 
+                                loginButton.disabled = false;
+                                loginButton.innerText = "Masuk";
+                            }
+                        } else {
+                            // Data user tidak ada di DB (mungkin admin?)
+                            // Cek jika ini admin
+                            if (user.email === 'root@zeppelin.center') {
+                                window.location.href = 'index.html'; // Arahkan admin ke dashboard admin
+                                return;
+                            }
+                            showMessage('login-msg', "Data user tidak ditemukan di database. Hubungi Admin.");
+                            signOut(auth); 
+                            loginButton.disabled = false;
+                            loginButton.innerText = "Masuk";
+                        }
+                    }).catch((dbError) => {
+                        console.error("DB read error:", dbError);
+                        showMessage('login-msg', "Gagal memverifikasi status akun. Coba lagi.");
+                        signOut(auth);
+                        loginButton.disabled = false;
+                        loginButton.innerText = "Masuk";
+                    });
+
+                })
+                .catch((error) => {
+                    // Gagal login (email/password salah)
+                    console.error("Login error:", error.code, error.message);
+                    showMessage('login-msg', "Email atau kata sandi salah. Coba lagi.");
+                    loginButton.disabled = false;
+                    loginButton.innerText = "Masuk";
+                });
+        });
+
+
+        // --- Logika REGISTRASI (SAMA) ---
+        const registerForm = document.getElementById('register-form');
+        const regName = document.getElementById('reg-name');
+        const regDept = document.getElementById('reg-dept');
+        const regEmail = document.getElementById('reg-email');
+        const regPassword = document.getElementById('reg-password');
+        const registerButton = document.getElementById('register-button');
+
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            hideMessage('register-msg');
+
+            const nameVal = regName.value.trim();
+            const deptVal = regDept.value.trim();
+            const emailVal = regEmail.value.trim();
+            const passVal = regPassword.value.trim();
+
+            if (!nameVal || !deptVal || !emailVal || !passVal) {
+                showMessage('register-msg', "Semua field wajib diisi.");
+                return;
+            }
+            if (passVal.length < 6) {
+                showMessage('register-msg', "Password minimal 6 karakter.");
+                return;
+            }
+
+            registerButton.disabled = true;
+            registerButton.innerText = "Memproses...";
+
+            createUserWithEmailAndPassword(auth, emailVal, passVal)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    set(ref(db, 'users/' + user.uid), {
+                        uid: user.uid, // [TAMBAHAN] Simpan UID juga
+                        nama: nameVal,
+                        departemen: deptVal,
+                        email: emailVal,
+                        status: 'pending' // <-- Status default menunggu persetujuan
+                    })
+                    .then(() => {
+                        showMessage('register-msg', "Registrasi berhasil! Akun Anda sedang menunggu persetujuan Admin.", false);
+                        registerForm.reset();
+                        registerButton.disabled = false;
+                        registerButton.innerText = "Daftar";
+                        
+                        setTimeout(() => {
+                            showLoginBtn.click();
+                            hideMessage('register-msg');
+                        }, 3000);
+                    })
+                    .catch((dbError) => {
+                        console.error("DB error:", dbError);
+                        showMessage('register-msg', "Registrasi akun berhasil, tapi gagal simpan data user. Hubungi Admin.");
+                        registerButton.disabled = false;
+                        registerButton.innerText = "Daftar";
+                    });
+                })
+                .catch((authError) => {
+                    console.error("Auth error:", authError.code);
+                    if (authError.code === 'auth/email-already-in-use') {
+                        showMessage('register-msg', "Email ini sudah terdaftar. Silakan login.");
+                    } else {
+                        showMessage('register-msg', "Registrasi gagal. Coba lagi.");
+                    }
+                    registerButton.disabled = false;
+                    registerButton.innerText = "Daftar";
+                });
+        });
+
+    </script>
+
+</body>
+</html>

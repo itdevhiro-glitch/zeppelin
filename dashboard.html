@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard - Zeppelin Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="loading-screen" class="loading-screen">
+        <div class="spinner"></div>
+        <p>Memuat Portal...</p>
+    </div>
+
+    <div id="main-content" style="display: none;">
+        
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="dashboard.html" class="nav-logo">
+                    <i class="fa-solid fa-gear"></i> ZEPPELIN
+                </a>
+                <div class="nav-right">
+                    <button class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+
+                    <div class="nav-shortcuts">
+                        <a href="#" class="shortcut-icon">
+                            <i class="fa-solid fa-headset"></i>
+                            <span class="tooltip">Layanan IT</span>
+                        </a>
+                        <a href="chat.html" class="shortcut-icon">
+                            <i class="fa-solid fa-comments"></i>
+                            <span class="tooltip">Pusat Kolaborasi</span>
+                        </a>
+                        <a href="#" class="shortcut-icon">
+                            <i class="fa-solid fa-bullhorn"></i>
+                            <span class="tooltip">Pemasaran</span>
+                        </a>
+                        <a href="#" class="shortcut-icon">
+                            <i class="fa-solid fa-boxes-stacked"></i>
+                            <span class="tooltip">Stok</span>
+                        </a>
+                    </div>
+                    <div class="nav-profile">
+                        <div id="user-greeting">Halo, <span>Tamu</span></div>
+                        <button id="logout-btn" class="logout-button">
+                            <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="mobile-menu" id="mobile-menu">
+            <a href="#"><i class="fa-solid fa-headset"></i> Layanan IT</a>
+            <a href="chat.html"><i class="fa-solid fa-comments"></i> Pusat Kolaborasi</a>
+            <a href="permintaanuser.html"><i class="fa-solid fa-laptop-file"></i> Permintaan Perangkat</a>
+            <a href="#" id="mobile-hr-link"><i class="fa-solid fa-pen-to-square"></i> Manajemen Pengumuman</a>
+            <hr>
+            <a href="#"><i class="fa-solid fa-bullhorn"></i> Pemasaran</a>
+            <a href="#"><i class="fa-solid fa-boxes-stacked"></i> Stok</a>
+            <hr>
+            <button id="logout-btn-mobile" class="logout-button" style="width: 100%;">
+                <i class="fa-solid fa-right-from-bracket"></i> Keluar
+            </button>
+        </div>
+        
+        <section class="hero">
+            <div class="container hero-container">
+                <div class="hero-text fade-in-up">
+                    <h1>Selamat Datang di <span>Portal Zeppelin</span></h1>
+                    <p>Semua aplikasi dan alat bantu yang Anda butuhkan untuk produktivitas, kini terintegrasi di satu tempat.</p>
+                    <a href="#portal-section" class="hero-button">Lihat Aplikasi Anda</a>
+                </div>
+                <div class="hero-visual fade-in-up">
+                    <div class="icon-spinner">
+                        <i class="fa-solid fa-blender-phone center-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="portal-section" id="portal-section">
+            <div class="container">
+                <div class="portal-grid">
+                    <a href="#" class="portal-card fade-in-up" style="transition-delay: 100ms;">
+                        <div class="portal-icon icon-red">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <h3>Layanan IT (Helpdesk)</h3>
+                        <p>Buat laporan kendala atau ajukan permintaan dukungan teknis baru.</p>
+                        <span class="portal-link">Buka Aplikasi <i class="fa-solid fa-arrow-right"></i></span>
+                    </a>
+                    
+                    <a href="chat.html" class="portal-card fade-in-up" style="transition-delay: 200ms;">
+                        <div class="portal-icon icon-green">
+                            <i class="fa-solid fa-comments"></i>
+                        </div>
+                        <h3>Pusat Kolaborasi</h3>
+                        <p>Fitur komunikasi internal: chat antar karyawan, grup departemen, dan Admin.</p>
+                        <span class="portal-link">Buka Aplikasi <i class="fa-solid fa-arrow-right"></i></span>
+                    </a>
+                    <a id="manage-content-card" href="#" class="portal-card fade-in-up" style="transition-delay: 300ms;"> 
+                        <div class="portal-icon icon-blue"> <i class="fa-solid fa-pen-to-square"></i></div>
+                        <h3>Manajemen Pengumuman</h3> <p>Hanya untuk HRD. Update pengumuman perusahaan terbaru.</p> <span class="portal-link">Buka Halaman <i class="fa-solid fa-arrow-right"></i></span>
+                    </a>
+                    <a href="permintaanuser.html" class="portal-card fade-in-up" style="transition-delay: 400ms;">
+                        <div class="portal-icon icon-orange">
+                            <i class="fa-solid fa-laptop-file"></i>
+                        </div>
+                        <h3>Permintaan Perangkat</h3>
+                        <p>Ajukan permintaan perangkat IT baru, upgrade, atau aksesori.</p>
+                        <span class="portal-link">Buka Aplikasi <i class="fa-solid fa-arrow-right"></i></span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <main class="main-content container">
+            <div class="main-grid">
+                <div class="main-column-left">
+                    <div class="fade-in-up" style="transition-delay: 100ms;">
+                        <h2 class="section-title">Pengumuman Perusahaan</h2>
+                        <div class="widget-card">
+                            <div class="widget-body">
+                                <ul id="announcement-list">
+                                    <li class="announcement-empty">Memuat pengumuman...</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fade-in-up" style="transition-delay: 200ms;">
+                        <h2 class="section-title">Tugas Saya (Pribadi)</h2>
+                        <div class="widget-card">
+                            <div class="widget-body">
+                                <div class="todo-input-group">
+                                    <input type="text" id="todo-input" placeholder="Tambah tugas baru...">
+                                    <button id="add-todo-btn"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                                <ul id="todo-list">
+                                    <li class="todo-empty">Tidak ada tugas.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="main-column-right">
+                    <div class="fade-in-up" style="transition-delay: 100ms;">
+                        <h2 class="section-title">Kalender & Waktu</h2>
+                        <div class="widget-card">
+                            <div class="widget-body" id="calendar-widget">
+                                <div id="clock-widget">
+                                    <div class="digital-clock">00:00:00</div>
+                                    <div class="digital-date">Memuat tanggal...</div>
+                                </div>
+                                <div class="calendar-header">
+                                    <div class="cal-nav">
+                                        <button id="prev-month"><i class="fa-solid fa-chevron-left"></i></button>
+                                    </div>
+                                    <div id="month-year">...</div>
+                                    <div class="cal-nav">
+                                        <button id="next-month"><i class="fa-solid fa-chevron-right"></i></button>
+                                    </div>
+                                </div>
+                                <div class="calendar-grid" id="calendar-days"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fade-in-up" style="transition-delay: 200ms;">
+                        <h2 class="section-title">Alat Bantu Cepat</h2>
+                        <div class="portal-list">
+                            <a href="chat.html">
+                                <i class="link-icon icon-green fa-solid fa-comments"></i>
+                                <div class="link-text">
+                                    <h3>Pusat Kolaborasi</h3>
+                                    <p>Chat internal antar karyawan.</p>
+                                </div>
+                                <i class="link-arrow fa-solid fa-arrow-right"></i>
+                            </a>
+                            <a id="hr-quick-link" href="#"> 
+                                <i class="link-icon icon-blue fa-solid fa-pen-to-square"></i> 
+                                <div class="link-text">
+                                    <h3>Buat Pengumuman</h3>
+                                    <p>Buka halaman manajemen konten (Khusus HRD).</p>
+                                </div>
+                                <i class="link-arrow fa-solid fa-arrow-right"></i>
+                            </a>
+                            <a href="permintaanuser.html">
+                                <i class="link-icon icon-orange fa-solid fa-laptop-file"></i>
+                                <div class="link-text">
+                                    <h3>Permintaan Perangkat</h3>
+                                    <p>Formulir hardware/software baru.</p>
+                                </div>
+                                <i class="link-arrow fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="footer">
+            <p>&copy; 2025 Zeppelin Manufacturing. Seluruh hak cipta dilindungi.</p>
+        </footer>
+    </div> 
+    
+    <div id="calendar-modal-backdrop" class="modal-backdrop"></div>
+    <div id="calendar-modal-content" class="modal-content">
+        <div class="modal-header">
+            <h3 id="modal-date-title">Detail Tanggal</h3>
+            <button id="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <div id="modal-holiday-info" style="display:none; background-color:#fee2e2; color:#D9232D; padding:12px; border-radius:8px; margin-bottom:20px;">
+                <i class="fa-solid fa-star"></i> <span id="modal-holiday-name"></span>
+            </div>
+            <h4>Catatan untuk hari ini:</h4>
+            <div id="modal-notes-list">
+                <div class="notes-empty">Tidak ada catatan.</div>
+            </div>
+            <div class="modal-form" style="margin-top:20px;">
+                <h4>Tambah Catatan Baru:</h4>
+                <textarea id="note-textarea" placeholder="Tulis catatan Anda di sini..."></textarea>
+                <button id="save-note-btn">Simpan Catatan</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-notification" class="toast-notification">
+        <i class="fa-solid fa-circle-xmark"></i>
+        <p>Akses Ditolak. Menu ini khusus untuk Departemen HRD.</p>
+    </div>
+
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

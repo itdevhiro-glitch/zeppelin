@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permintaan Perangkat - Zeppelin Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="loading-screen" class="loading-screen">
+        <div class="spinner"></div>
+        <p>Memuat Portal...</p>
+    </div>
+
+    <div id="main-content" style="display: none;">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="dashboard.html" class="nav-logo">
+                    <i class="fa-solid fa-gear"></i> ZEPPELIN
+                </a>
+                <div class="nav-right">
+                    <a href="dashboard.html" style="font-weight:500; margin-right:20px;">Dashboard</a>
+                    <div class="nav-profile">
+                        <div id="user-greeting">Halo, <span>Tamu</span></div>
+                        <button id="logout-btn" class="logout-button">
+                            <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content container">
+            <div class="page-header">
+                <h2 class="section-title"><i class="fa-solid fa-laptop-file"></i> Form Permintaan Perangkat IT</h2>
+            </div>
+            
+            <div class="widget-card">
+                <div class="widget-body">
+                    <form id="request-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="req-kategori">Kategori Permintaan</label>
+                                <select id="req-kategori" required>
+                                    <option value="">Pilih Kategori...</option>
+                                    <option value="Upgrade Hardware">Upgrade Hardware</option>
+                                    <option value="Perangkat Baru">Perangkat Baru</option>
+                                    <option value="Kabel & Aksesori">Kabel & Aksesori</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="req-prioritas">Prioritas</label>
+                                <select id="req-prioritas" required>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                    <option value="High">High</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="req-detail">Detail Perangkat</label>
+                            <input type="text" id="req-detail" placeholder="Contoh: Mouse Wireless Logitech" required>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="req-alasan">Alasan Kebutuhan</label>
+                            <textarea id="req-alasan" placeholder="Jelaskan kebutuhan Anda..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <button type="submit" class="form-button" id="submit-button">Kirim Permintaan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <h2 class="section-title" style="margin-top: 40px;">
+                <i class="fa-solid fa-history"></i> Riwayat Permintaan Saya
+            </h2>
+            
+            <div class="widget-card">
+                <div class="widget-body" style="padding: 0;">
+                    <div style="overflow-x:auto;">
+                        <table style="width:100%; border-collapse:collapse;">
+                            <thead>
+                                <tr style="background-color:#f9fafb; border-bottom:1px solid #e5e7eb;">
+                                    <th style="padding:12px; text-align:left;">Tanggal</th>
+                                    <th style="padding:12px; text-align:left;">Kategori</th>
+                                    <th style="padding:12px; text-align:left;">Detail</th>
+                                    <th style="padding:12px; text-align:left;">Status</th>
+                                    <th style="padding:12px; text-align:left;">Catatan Admin</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                                <tr><td colspan="5" style="padding:20px; text-align:center;">Memuat riwayat...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="js/permintaan.js"></script>
+</body>
+</html>

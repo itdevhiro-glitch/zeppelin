@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pusat Kolaborasi (Chat) - Zeppelin Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="dashboard.html" class="nav-logo">
+                <i class="fa-solid fa-gear"></i> ZEPPELIN
+            </a>
+            
+            <div class="nav-right">
+                <button id="mobile-dashboard-btn" class="logout-button mobile-only-nav">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </button>
+                <div id="user-greeting">Halo, <span>Tamu</span></div>
+                <button id="logout-btn" class="logout-button">
+                    <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="chat-layout">
+        <aside class="chat-sidebar" id="chat-sidebar">
+            <div class="sidebar-header" style="padding:20px 24px; border-bottom:1px solid #e5e7eb;">
+                <h2 style="font-size:1.5rem; font-weight:700; color:#D9232D;">Pusat Chat</h2>
+            </div>
+            <div class="sidebar-search" style="padding:10px 24px; border-bottom:1px solid #f3f4f6;">
+                <input type="text" id="search-contact" class="search-input" placeholder="Cari kontak..." style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px;">
+            </div>
+            <div class="chat-list-container" style="flex-grow:1; overflow-y:auto;">
+                <div class="chat-list-title" style="padding:10px 24px; font-weight:700; color:#6b7280; font-size:0.85rem;">Grup Divisi</div>
+                <div id="group-chat-list"></div>
+
+                <div id="admin-chat-section">
+                    <div class="chat-list-title" style="padding:10px 24px; font-weight:700; color:#6b7280; font-size:0.85rem;">Chat Admin</div>
+                    <div id="admin-chat-list"></div>
+                </div>
+
+                <div class="chat-list-title" style="padding:10px 24px; font-weight:700; color:#6b7280; font-size:0.85rem;">Chat Pribadi</div>
+                <div id="private-chat-list">
+                    <div class="chat-item" data-type="empty"><p class="chat-info">Memuat kontak...</p></div>
+                </div>
+            </div>
+        </aside>
+        
+        <main class="chat-main">
+            <div id="welcome-screen" class="welcome-screen" style="flex-grow:1; display:flex; flex-direction:column; justify-content:center; align-items:center; color:#9ca3af;">
+                <i class="fa-solid fa-comments" style="font-size:4rem; margin-bottom:20px;"></i>
+                <h4>Selamat Datang di Pusat Kolaborasi</h4>
+                <p>Pilih kontak atau grup dari sisi kiri.</p>
+            </div>
+
+            <div id="chat-content" style="display: none; height: 100%; flex-direction: column;">
+                <div class="chat-header" style="padding:15px 24px; border-bottom:1px solid #e5e7eb; display:flex; align-items:center;">
+                    <button id="sidebar-toggle-btn" style="display:none; background:none; border:none; font-size:1.2rem; margin-right:15px; cursor:pointer;"><i class="fa-solid fa-bars"></i></button>
+                    <div id="active-chat-avatar" class="chat-avatar"></div>
+                    <h3 id="active-chat-name" style="font-weight:700;"></h3>
+                </div>
+                
+                <div class="chat-messages" id="chat-messages"></div>
+                
+                <div class="chat-input-area" id="chat-input-area">
+                    <textarea id="message-input" rows="1" placeholder="Ketik pesan Anda..." style="resize:none;"></textarea>
+                    <button id="send-button"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div id="toast-notification" class="toast-notification">
+        <i class="fa-solid fa-circle-xmark"></i>
+        <p></p>
+    </div>
+
+    <script type="module" src="js/chat.js"></script>
+</body>
+</html>
